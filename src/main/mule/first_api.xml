@@ -88,4 +88,12 @@ WHERE ID = :ID]]></db:sql>
 		</db:update>
 		<set-payload value='{"messages": "flight updated"}' doc:name="Set Payload" doc:id="91caecde-06c7-4eb2-abe8-e7f4b0f2653d" />
 	</flow>
+	<flow name="first_apiFlow_Delete" doc:id="a11db1e8-254e-4c27-af30-48e88405f5b3" >
+		<http:listener doc:name="Listener" doc:id="c0000e5c-d3a3-4e2e-8ec5-5d05597440bc" config-ref="HTTP_Listener_config" path="/Flights/{ID}" allowedMethods="DELETE" />
+		<db:delete doc:name="Delete" doc:id="aae1e67f-9e34-4a92-82a3-ac216154f221" config-ref="Database_Config">
+			<db:sql ><![CDATA[DELETE FROM flight electronic WHERE ID = :ID]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{"ID": attributes.uriParams.ID}]]]></db:input-parameters>
+		</db:delete>
+		<set-payload value='{"messages": "deleted"}' doc:name="Set Payload" doc:id="de23b67c-fffb-4650-83ce-6462c4891836" />
+	</flow>
 </mule>
