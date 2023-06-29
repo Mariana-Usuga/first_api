@@ -49,37 +49,43 @@ payload ]]></ee:set-payload>
 	<flow name="first_apiFlow_Post" doc:id="ea194ea9-b87c-46c5-ad55-8bbe06d1d44a" >
 		<http:listener doc:name="Listener" doc:id="1efdcf72-40d1-4b6b-ad04-7dee7355cd68" config-ref="HTTP_Listener_config" path="/Flights" allowedMethods="POST"/>
 		<db:insert doc:name="Insert" doc:id="07549392-0cf9-485f-8b3d-79894308609c" config-ref="Database_Config">
-			<db:sql ><![CDATA[insert into mysql (code1,price,takeOffDate,fromAirport,toAirport,seatsAvailable,planeType,totalSeats)
-VALUES (:code1,:price,:takeOffDate,:fromAirport,:toAirport,:seatsAvailable,:planeType,:totalSeats)]]></db:sql>
+			<db:sql ><![CDATA[insert into flight (code,price,departureDate,origin,destination,emptySeats,totalSeats)
+values (:code,:price,:departureDate,:origin,:destination,:emptySeats,:totalSeats);]]></db:sql>
 			<db:input-parameters ><![CDATA[#[{
-	'code1': payload.code,
-	'price': payload.price,
-	'takeOffDate': payload.departureDate,
-	'fromAirport': payload.origin,
-	'toAirport': payload.destination,
-	'seatsAvailables': payload.emptySeats,
-	'planeType': payload.plane."type",	
-	'totalSeats': payload.plane.totalSeats
+   "code": payload.code,
+	"price": payload.price,
+	"departureDate": payload.departureDate,
+    "origin": payload.origin,
+    "destination": payload.destination,
+    "emptySeats": payload.emptySeats,	
+	"totalSeats": payload.totalSeats
 }]]]></db:input-parameters>
 		</db:insert>
-		<set-payload value='{"messages": "vuelo añadido no realmente"}' doc:name="Set Payload" doc:id="3a3e9b95-789e-4689-9c49-399698a65be6" />
+		<set-payload value='{"messages": "vuelo añadido"}' doc:name="Set Payload" doc:id="3a3e9b95-789e-4689-9c49-399698a65be6" />
 	</flow>
-	<flow name="first_apiFlow_Post1" doc:id="ce9180b0-250b-4801-94c8-817e5ef9cd1b" >
-		<http:listener doc:name="Listener" doc:id="4f09192a-078e-4b26-add4-7b5dd453ab6c" config-ref="HTTP_Listener_config" path="/Flights" allowedMethods="POST" />
-		<db:insert doc:name="Insert" doc:id="4a6612bd-b2dd-4b5a-aa6e-0bb0a27ca435" config-ref="Database_Config" >
-			<db:sql ><![CDATA[insert into mysql (code1,price,takeOffDate,fromAirport,toAirport,seatsAvailable,planeType,totalSeats)
-VALUES (:code1,:price,:takeOffDate,:fromAirport,:toAirport,:seatsAvailable,:planeType,:totalSeats)]]></db:sql>
+	<flow name="first_apiFlow_Update" doc:id="9897284d-9efc-46c8-b2e8-a299ad76c2c8" >
+		<http:listener doc:name="Listener" doc:id="eb12f2ba-8d6f-470c-aa26-8fbefb2522ed" config-ref="HTTP_Listener_config" path="/Flights/{ID}" allowedMethods="PUT" />
+		<db:update doc:name="Update" doc:id="e325c84c-9a40-438a-a574-3b9f2fa98fd1" config-ref="Database_Config">
+			<db:sql ><![CDATA[UPDATE flight
+SET price = :price,
+    code = :code,
+    departureDate = :departureDate,
+    origin = :origin,
+    destination = :destination,
+    emptySeats = :emptySeats,
+    totalSeats = :totalSeats
+WHERE ID = :ID]]></db:sql>
 			<db:input-parameters ><![CDATA[#[{
-	'code1': payload.code,
-	'price': payload.price,
-	'takeOffDate': payload.departureDate,
-	'fromAirport': payload.origin,
-	'toAirport': payload.destination,
-	'seatsAvailables': payload.emptySeats,
-	'planeType': payload.plane."type",	
-	'totalSeats': payload.plane.totalSeats
+	"ID": attributes.uriParams.ID,
+    "code": payload.code,
+	"price": payload.price,
+	"departureDate": payload.departureDate,
+    "origin": payload.origin,
+    "destination": payload.destination,
+    "emptySeats": payload.emptySeats,	
+	"totalSeats": payload.totalSeats
 }]]]></db:input-parameters>
-		</db:insert>
-		<set-payload value='{"messages": "vuelo añadido no realmente"}' doc:name="Set Payload" doc:id="d9a23141-4163-403f-b8b9-77ebcb54d1b5" />
+		</db:update>
+		<set-payload value='{"messages": "flight updated"}' doc:name="Set Payload" doc:id="91caecde-06c7-4eb2-abe8-e7f4b0f2653d" />
 	</flow>
 </mule>
